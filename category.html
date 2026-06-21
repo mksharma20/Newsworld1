@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Category | UdaipurTimes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="topbar"><div class="container topbar-inner">
+  <div class="topbar-left"><span><i class="fas fa-calendar-alt"></i> <span id="currentDate"></span></span></div>
+  <div class="topbar-right">
+    <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="admin/index.html" class="admin-btn"><i class="fas fa-lock"></i> Admin</a>
+  </div>
+</div></div>
+<header class="header"><div class="container header-inner">
+  <div class="logo"><a href="index.html"><div class="logo-text">
+    <span class="logo-main">UdaipurTimes</span>
+    <span class="logo-tag">TAKING LOCAL GLOBAL</span>
+  </div></a></div>
+</div></header>
+<nav class="main-nav"><div class="container">
+  <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="category.html?cat=news">Latest News</a></li>
+    <li><a href="category.html?cat=hindi">Hindi News</a></li>
+    <li><a href="category.html?cat=travel">Travel</a></li>
+    <li><a href="category.html?cat=education">Education</a></li>
+    <li><a href="category.html?cat=sports">Sports</a></li>
+    <li><a href="category.html?cat=crime">Crime</a></li>
+    <li><a href="category.html?cat=business">Business</a></li>
+    <li><a href="category.html?cat=technology">Technology</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+  </div>
+</div></nav>
+
+<main><div class="container" style="padding-top:20px">
+  <div class="content-grid">
+    <div>
+      <div class="cat-page-header">
+        <h1 id="catTitle">Category</h1>
+        <p id="catDesc">Sabse latest khabrein</p>
+      </div>
+      <div class="cat-news-list" id="articleGrid"></div>
+      <div id="noArticles" style="display:none;text-align:center;padding:60px;color:#888;background:#fff;border-radius:3px;margin-top:16px">
+        <i class="fas fa-newspaper fa-3x" style="color:#ddd"></i>
+        <p style="margin-top:12px">Is category mein abhi koi article nahi hai.</p>
+        <a href="admin/index.html" style="color:#c0392b">Admin panel se article add karein</a>
+      </div>
+      <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()" style="display:none">Aur Load Karein</button>
+    </div>
+    <aside class="sidebar">
+      <div class="widget"><div class="widget-title">Most Read</div><ul class="most-read-list" id="mostReadList"></ul></div>
+      <div class="widget"><div class="widget-title">Categories</div><ul class="cat-list" id="catList"></ul></div>
+      <div class="widget sidebar-ad"><div class="ad-placeholder-v">Ad 300×250</div></div>
+    </aside>
+  </div>
+</div></main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-col"><div class="footer-logo">UdaipurTimes</div><p>Udaipur ka sabse trusted Hyperlocal news portal.</p></div>
+    <div class="footer-col"><h4>Categories</h4><ul>
+      <li><a href="category.html?cat=news">Latest News</a></li>
+      <li><a href="category.html?cat=travel">Travel</a></li>
+      <li><a href="category.html?cat=sports">Sports</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Links</h4><ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="admin/index.html">Admin</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Follow Us</h4><div class="footer-social">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-x-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div></div>
+  </div>
+  <div class="footer-bottom"><div class="container"><p>Copyright © 2024 UdaipurTimes.com</p></div></div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('hi-IN', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('hamburger').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
+function doSearch() { const q = document.getElementById('searchInput').value.trim(); if(q) window.location.href='search.html?q='+encodeURIComponent(q); }
+document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+
+const params = new URLSearchParams(window.location.search);
+const cat = params.get('cat') || 'news';
+const catInfo = DB.categories[cat] || { label: cat, icon: 'fa-newspaper' };
+
+document.title = catInfo.label + ' | UdaipurTimes';
+document.getElementById('pageTitle').textContent = catInfo.label + ' | UdaipurTimes';
+document.getElementById('catTitle').innerHTML = `<i class="fas ${catInfo.icon}"></i> ${catInfo.label}`;
+document.getElementById('catDesc').textContent = catInfo.label + ' se related sabse latest khabrein';
+
+const PER_PAGE = 9;
+let page = 1;
+const allArticles = DB.getByCategory(cat);
+
+function newsCardHTML(a) {
+  return `<div class="news-card">
+    <div class="nc-img">
+      <img src="${a.image||NO_IMAGE_SVG}" alt="${a.title}" onerror="this.src='${NO_IMAGE_SVG}'">
+      <span class="nc-cat">${DB.categories[a.category]?.label||a.category}</span>
+    </div>
+    <div class="nc-body">
+      <h3><a href="article.html?id=${a.id}">${a.title}</a></h3>
+      <p>${a.excerpt}</p>
+      <div class="nc-meta">
+        <span><i class="fas fa-user"></i> ${a.author}</span>
+        <span><i class="fas fa-clock"></i> ${DB.formatDate(a.date)}</span>
+        <span><i class="fas fa-eye"></i> ${a.views}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPage() {
+  const slice = allArticles.slice(0, page * PER_PAGE);
+  document.getElementById('articleGrid').innerHTML = slice.map(newsCardHTML).join('');
+  if (allArticles.length === 0) document.getElementById('noArticles').style.display = 'block';
+  document.getElementById('loadMoreBtn').style.display = slice.length < allArticles.length ? 'block' : 'none';
+}
+function loadMore() { page++; renderPage(); }
+renderPage();
+
+// Sidebar
+document.getElementById('mostReadList').innerHTML = DB.getMostViewed(5).map((a,i)=>`
+  <li><div class="mr-num">${i+1}</div><div class="mr-title"><a href="article.html?id=${a.id}">${a.title}</a></div></li>`).join('');
+const allA = DB.getAll(); const counts={};
+allA.forEach(a=>{counts[a.category]=(counts[a.category]||0)+1;});
+document.getElementById('catList').innerHTML = Object.entries(DB.categories).map(([k,v])=>`
+  <li><a href="category.html?cat=${k}"><span><i class="fas ${v.icon}"></i> ${v.label}</span><span>${counts[k]||0}</span></a></li>`).join('');
+</script>
+</body>
+</html>

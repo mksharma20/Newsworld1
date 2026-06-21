@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Article | UdaipurTimes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-left">
+      <span><i class="fas fa-calendar-alt"></i> <span id="currentDate"></span></span>
+    </div>
+    <div class="topbar-right">
+      <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://twitter.com" target="_blank"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="admin/index.html" class="admin-btn"><i class="fas fa-lock"></i> Admin</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">
+      <a href="index.html">
+        <div class="logo-text">
+          <span class="logo-main">UdaipurTimes</span>
+          <span class="logo-tag">TAKING LOCAL GLOBAL</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN NAV -->
+<nav class="main-nav">
+  <div class="container">
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="category.html?cat=news">Latest News</a></li>
+      <li><a href="category.html?cat=hindi">Hindi News</a></li>
+      <li><a href="category.html?cat=travel">Travel</a></li>
+      <li><a href="category.html?cat=education">Education</a></li>
+      <li><a href="category.html?cat=sports">Sports</a></li>
+      <li><a href="category.html?cat=crime">Crime</a></li>
+      <li><a href="category.html?cat=business">Business</a></li>
+      <li><a href="category.html?cat=technology">Technology</a></li>
+      <li><a href="category.html?cat=events">Events</a></li>
+    </ul>
+    <div class="nav-search">
+      <input type="text" id="searchInput" placeholder="Search...">
+      <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div style="background:#fff;border-bottom:1px solid #ddd;padding:8px 0;font-size:12px;color:#888;">
+  <div class="container">
+    <a href="index.html" style="color:#c0392b">Home</a>
+    <span style="margin:0 6px">/</span>
+    <a href="#" id="breadCat" style="color:#c0392b"></a>
+    <span style="margin:0 6px">/</span>
+    <span id="breadTitle" style="color:#555"></span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="container">
+    <div class="article-layout">
+      <div>
+        <div class="article-body" id="articleBody">
+          <div style="text-align:center;padding:60px;color:#888">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top:12px">Loading article...</p>
+          </div>
+        </div>
+
+        <!-- RELATED -->
+        <div class="related-section" id="relatedSection" style="display:none">
+          <div class="section-header">
+            <h2>Related Articles</h2>
+          </div>
+          <div class="news-grid" id="relatedGrid"></div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="widget">
+          <div class="widget-title">Most Read</div>
+          <ul class="most-read-list" id="mostReadList"></ul>
+        </div>
+        <div class="widget">
+          <div class="widget-title">Categories</div>
+          <ul class="cat-list" id="catList"></ul>
+        </div>
+        <div class="widget sidebar-ad">
+          <div class="ad-placeholder-v">Ad 300×250</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <div class="footer-logo">UdaipurTimes</div>
+      <p>Udaipur ka sabse trusted Hyperlocal news portal.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="category.html?cat=news">Latest News</a></li>
+        <li><a href="category.html?cat=travel">Travel</a></li>
+        <li><a href="category.html?cat=sports">Sports</a></li>
+        <li><a href="category.html?cat=crime">Crime</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Links</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="admin/index.html">Admin</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container"><p>Copyright © 2024 UdaipurTimes.com | All Rights Reserved</p></div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+document.getElementById('currentDate').textContent =
+  new Date().toLocaleDateString('hi-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+document.getElementById('hamburger').addEventListener('click', () =>
+  document.getElementById('navLinks').classList.toggle('open'));
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) window.location.href = 'search.html?q=' + encodeURIComponent(q);
+}
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+function newsCardHTML(a) {
+  return `<div class="news-card">
+    <div class="nc-img">
+      <img src="${a.image||NO_IMAGE_SVG}" alt="${a.title}" onerror="this.src='${NO_IMAGE_SVG}'">
+      <span class="nc-cat">${DB.categories[a.category]?.label||a.category}</span>
+    </div>
+    <div class="nc-body">
+      <h3><a href="article.html?id=${a.id}">${a.title}</a></h3>
+      <p>${a.excerpt}</p>
+      <div class="nc-meta">
+        <span><i class="fas fa-clock"></i> ${DB.formatDate(a.date)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Load article
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+const article = id ? DB.getById(id) : null;
+
+if (!article) {
+  document.getElementById('articleBody').innerHTML = `
+    <div style="text-align:center;padding:60px;color:#888">
+      <i class="fas fa-exclamation-triangle fa-3x" style="color:#c0392b"></i>
+      <h2 style="margin-top:16px">Article nahi mila</h2>
+      <p style="margin-top:8px">Yeh article delete ho sakta hai ya link galat hai.</p>
+      <a href="index.html" style="display:inline-block;margin-top:16px;background:#c0392b;color:#fff;padding:10px 24px;border-radius:3px">Home par jaayein</a>
+    </div>`;
+} else {
+  DB.incrementViews(article.id);
+  document.title = article.title + ' | UdaipurTimes';
+  document.getElementById('pageTitle').textContent = article.title + ' | UdaipurTimes';
+  document.getElementById('breadCat').textContent = DB.categories[article.category]?.label || article.category;
+  document.getElementById('breadCat').href = 'category.html?cat=' + article.category;
+  document.getElementById('breadTitle').textContent = article.title.substring(0, 40) + '...';
+
+  document.getElementById('articleBody').innerHTML = `
+    <span class="article-cat-badge">${DB.categories[article.category]?.label || article.category}</span>
+    <h1 class="article-title">${article.title}</h1>
+    <div class="article-meta">
+      <span><i class="fas fa-user"></i> ${article.author}</span>
+      <span><i class="fas fa-clock"></i> ${DB.formatDate(article.date)}</span>
+      <span><i class="fas fa-eye"></i> ${article.views} views</span>
+      ${article.tags.map(t => `<span><i class="fas fa-tag"></i> ${t}</span>`).join('')}
+    </div>
+    ${article.image ? `<div class="article-img-wrap"><img src="${article.image}" alt="${article.title}" onerror="this.src='${NO_IMAGE_SVG}'"></div>` : ''}
+    <div class="article-content">${article.content || '<p>' + article.excerpt + '</p>'}</div>
+    <div class="share-bar">
+      <span style="font-size:13px;font-weight:700;align-self:center">Share:</span>
+      <button class="share-btn fb" onclick="shareOn('facebook')"><i class="fab fa-facebook-f"></i> Facebook</button>
+      <button class="share-btn tw" onclick="shareOn('twitter')"><i class="fab fa-x-twitter"></i> Twitter</button>
+      <button class="share-btn wa" onclick="shareOn('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      <button class="share-btn copy" onclick="copyLink()"><i class="fas fa-link"></i> Copy Link</button>
+    </div>`;
+
+  // Related
+  const related = DB.getByCategory(article.category, 4).filter(a => a.id !== article.id).slice(0, 3);
+  if (related.length > 0) {
+    document.getElementById('relatedSection').style.display = 'block';
+    document.getElementById('relatedGrid').innerHTML = related.map(newsCardHTML).join('');
+  }
+}
+
+function shareOn(platform) {
+  const url = encodeURIComponent(window.location.href);
+  const title = encodeURIComponent(article?.title || '');
+  const urls = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
+    whatsapp: `https://wa.me/?text=${title}%20${url}`
+  };
+  window.open(urls[platform], '_blank', 'width=600,height=400');
+}
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href);
+  alert('Link copy ho gaya!');
+}
+
+// Sidebar
+document.getElementById('mostReadList').innerHTML = DB.getMostViewed(5).map((a, i) => `
+  <li><div class="mr-num">${i+1}</div><div class="mr-title"><a href="article.html?id=${a.id}">${a.title}</a></div></li>`).join('');
+
+const all = DB.getAll();
+const counts = {};
+all.forEach(a => { counts[a.category] = (counts[a.category]||0)+1; });
+document.getElementById('catList').innerHTML = Object.entries(DB.categories).map(([k,v]) => `
+  <li><a href="category.html?cat=${k}"><span><i class="fas ${v.icon}"></i> ${v.label}</span><span>${counts[k]||0}</span></a></li>`).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search | UdaipurTimes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="topbar"><div class="container topbar-inner">
+  <div class="topbar-left"><span><i class="fas fa-calendar-alt"></i> <span id="currentDate"></span></span></div>
+  <div class="topbar-right"><a href="admin/index.html" class="admin-btn"><i class="fas fa-lock"></i> Admin</a></div>
+</div></div>
+<header class="header"><div class="container header-inner">
+  <div class="logo"><a href="index.html"><div class="logo-text">
+    <span class="logo-main">UdaipurTimes</span><span class="logo-tag">TAKING LOCAL GLOBAL</span>
+  </div></a></div>
+</div></header>
+<nav class="main-nav"><div class="container">
+  <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="category.html?cat=news">Latest News</a></li>
+    <li><a href="category.html?cat=travel">Travel</a></li>
+    <li><a href="category.html?cat=sports">Sports</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+  </div>
+</div></nav>
+
+<main><div class="container search-page">
+  <div class="content-grid">
+    <div>
+      <div class="cat-page-header">
+        <h1 id="searchHeading">Search Results</h1>
+        <p id="searchCount"></p>
+      </div>
+      <div id="searchResults"></div>
+    </div>
+    <aside class="sidebar">
+      <div class="widget">
+        <div class="widget-title">Search Again</div>
+        <div style="padding:14px">
+          <input type="text" id="newSearch" placeholder="Search karo..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:8px">
+          <button onclick="newDoSearch()" style="width:100%;background:#c0392b;color:#fff;border:none;padding:8px;border-radius:3px;font-size:13px;cursor:pointer">Search</button>
+        </div>
+      </div>
+      <div class="widget"><div class="widget-title">Most Read</div><ul class="most-read-list" id="mostReadList"></ul></div>
+      <div class="widget"><div class="widget-title">Categories</div><ul class="cat-list" id="catList"></ul></div>
+    </aside>
+  </div>
+</div></main>
+
+<footer class="footer">
+  <div class="footer-bottom"><div class="container"><p>Copyright © 2024 UdaipurTimes.com</p></div></div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('hi-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+
+const params = new URLSearchParams(window.location.search);
+const q = params.get('q') || '';
+document.getElementById('searchInput').value = q;
+document.getElementById('newSearch').value = q;
+
+function doSearch(){const v=document.getElementById('searchInput').value.trim();if(v)window.location.href='search.html?q='+encodeURIComponent(v);}
+function newDoSearch(){const v=document.getElementById('newSearch').value.trim();if(v)window.location.href='search.html?q='+encodeURIComponent(v);}
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+document.getElementById('newSearch').addEventListener('keydown',e=>{if(e.key==='Enter')newDoSearch();});
+
+if(q){
+  document.getElementById('searchHeading').textContent = '"' + q + '" ke results';
+  const results = DB.search(q);
+  document.getElementById('searchCount').textContent = results.length + ' results mile';
+  if(results.length===0){
+    document.getElementById('searchResults').innerHTML = `
+      <div style="text-align:center;padding:60px;background:#fff;border-radius:3px;color:#888">
+        <i class="fas fa-search fa-3x" style="color:#ddd"></i>
+        <p style="margin-top:12px">"${q}" ke liye koi result nahi mila.</p>
+        <p style="font-size:12px;margin-top:6px">Alag keywords try karein</p>
+      </div>`;
+  } else {
+    document.getElementById('searchResults').innerHTML = results.map(a=>`
+      <div class="search-result-item">
+        <img src="${a.image||NO_IMAGE_SVG}" alt="${a.title}" onerror="this.src='${NO_IMAGE_SVG}'">
+        <div class="sr-info">
+          <div style="font-size:10px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${DB.categories[a.category]?.label||a.category}</div>
+          <h3><a href="article.html?id=${a.id}">${a.title}</a></h3>
+          <p>${a.excerpt}</p>
+          <div class="sr-meta"><i class="fas fa-user"></i> ${a.author} &nbsp;&nbsp; <i class="fas fa-clock"></i> ${DB.formatDate(a.date)} &nbsp;&nbsp; <i class="fas fa-eye"></i> ${a.views} views</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+document.getElementById('mostReadList').innerHTML = DB.getMostViewed(5).map((a,i)=>`
+  <li><div class="mr-num">${i+1}</div><div class="mr-title"><a href="article.html?id=${a.id}">${a.title}</a></div></li>`).join('');
+const allA=DB.getAll();const counts={};allA.forEach(a=>{counts[a.category]=(counts[a.category]||0)+1;});
+document.getElementById('catList').innerHTML=Object.entries(DB.categories).map(([k,v])=>`
+  <li><a href="category.html?cat=${k}"><span><i class="fas ${v.icon}"></i> ${v.label}</span><span>${counts[k]||0}</span></a></li>`).join('');
+</script>
+</body>
+</html>
