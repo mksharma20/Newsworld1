@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | UdaipurTimes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Open Sans',sans-serif;background:#f0f2f5;color:#333;display:flex;min-height:100vh}
+    /* SIDEBAR */
+    .admin-sidebar{width:240px;background:#1e2a38;color:#ccc;flex-shrink:0;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;}
+    .admin-logo{padding:20px 18px;border-bottom:1px solid #2d3a4a;}
+    .admin-logo h2{color:#fff;font-size:18px;font-weight:700;font-family:Georgia,serif;}
+    .admin-logo p{font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+    .sidebar-nav{flex:1;padding:12px 0;}
+    .sidebar-nav a{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#aaa;font-size:13px;font-weight:600;transition:all .2s;cursor:pointer;text-decoration:none;}
+    .sidebar-nav a:hover,.sidebar-nav a.active{background:#2d3a4a;color:#fff;}
+    .sidebar-nav a i{width:16px;text-align:center;color:#c0392b;}
+    .sidebar-nav .nav-section{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;padding:14px 18px 4px;font-weight:700;}
+    .admin-sidebar-footer{padding:14px 18px;border-top:1px solid #2d3a4a;font-size:12px;}
+    .admin-sidebar-footer a{color:#888;text-decoration:none;display:block;margin-bottom:6px;transition:color .2s;}
+    .admin-sidebar-footer a:hover{color:#fff;}
+
+    /* MAIN */
+    .admin-main{flex:1;display:flex;flex-direction:column;min-width:0;}
+    .admin-topbar{background:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e0e0;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+    .admin-topbar h1{font-size:18px;font-weight:700;color:#1e2a38;}
+    .admin-topbar .user-info{display:flex;align-items:center;gap:12px;font-size:13px;color:#555;}
+    .logout-btn{background:#c0392b;color:#fff;border:none;padding:7px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;}
+    .logout-btn:hover{background:#922b21;}
+    .admin-content{padding:24px;flex:1;}
+
+    /* PANELS */
+    .panel{display:none;}
+    .panel.active{display:block;}
+
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+    .stat-card{background:#fff;border-radius:6px;padding:20px;display:flex;align-items:center;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+    .stat-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0;}
+    .stat-icon.red{background:#c0392b} .stat-icon.blue{background:#2980b9} .stat-icon.green{background:#27ae60} .stat-icon.orange{background:#e67e22}
+    .stat-num{font-size:26px;font-weight:700;color:#1e2a38;line-height:1;}
+    .stat-label{font-size:12px;color:#888;margin-top:3px;}
+
+    /* TABLE */
+    .table-wrap{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;}
+    .table-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;}
+    .table-header h3{font-size:15px;font-weight:700;color:#1e2a38;}
+    .table-search{padding:7px 12px;border:1px solid #ddd;border-radius:4px;font-size:13px;outline:none;width:220px;}
+    table{width:100%;border-collapse:collapse;}
+    table th{background:#f8f9fa;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;padding:10px 16px;text-align:left;border-bottom:2px solid #eee;}
+    table td{padding:12px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle;}
+    table tr:last-child td{border-bottom:none;}
+    table tr:hover td{background:#fafafa;}
+    .art-title-cell{font-weight:600;color:#1e2a38;max-width:300px;}
+    .art-title-cell small{display:block;font-weight:400;color:#888;font-size:11px;margin-top:2px;}
+    .cat-badge{display:inline-block;background:#fef0f0;color:#c0392b;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:1px;}
+    .feat-badge{background:#e8f5e9;color:#27ae60;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+    .break-badge{background:#fff3e0;color:#e67e22;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+    .action-btns{display:flex;gap:6px;}
+    .btn-edit{background:#2980b9;color:#fff;border:none;padding:5px 12px;border-radius:3px;font-size:11px;font-weight:700;cursor:pointer;}
+    .btn-edit:hover{background:#1a6fa8;}
+    .btn-del{background:#e74c3c;color:#fff;border:none;padding:5px 12px;border-radius:3px;font-size:11px;font-weight:700;cursor:pointer;}
+    .btn-del:hover{background:#c0392b;}
+    .btn-view{background:#27ae60;color:#fff;border:none;padding:5px 12px;border-radius:3px;font-size:11px;font-weight:700;cursor:pointer;}
+    .btn-view:hover{background:#1e8449;}
+
+    /* FORM */
+    .form-card{background:#fff;border-radius:6px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+    .form-title{font-size:17px;font-weight:700;color:#1e2a38;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #f0f0f0;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .form-row.full{grid-template-columns:1fr;}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:6px;}
+    .form-group label .req{color:#c0392b;}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:4px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#c0392b;}
+    .form-group textarea{resize:vertical;min-height:200px;}
+    .form-group .hint{font-size:11px;color:#888;margin-top:4px;}
+    .checkbox-row{display:flex;gap:24px;align-items:center;}
+    .checkbox-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;cursor:pointer;}
+    .checkbox-item input{width:16px;height:16px;cursor:pointer;accent-color:#c0392b;}
+    .submit-bar{display:flex;gap:12px;margin-top:20px;padding-top:16px;border-top:2px solid #f0f0f0;flex-wrap:wrap;}
+    .btn-primary{background:#c0392b;color:#fff;border:none;padding:11px 28px;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;}
+    .btn-primary:hover{background:#922b21;}
+    .btn-secondary{background:#6c757d;color:#fff;border:none;padding:11px 22px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-secondary:hover{background:#545b62;}
+    .btn-success{background:#27ae60;color:#fff;border:none;padding:11px 22px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-success:hover{background:#1e8449;}
+    .add-new-btn{background:#c0392b;color:#fff;border:none;padding:9px 18px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;}
+    .add-new-btn:hover{background:#922b21;}
+
+    /* ALERT */
+    .alert{padding:12px 16px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:16px;display:none;}
+    .alert.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+    .alert.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6c6;}
+
+    /* EDITOR TOOLBAR */
+    .editor-toolbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:#f8f9fa;border:2px solid #e0e0e0;border-bottom:none;border-radius:4px 4px 0 0;}
+    .editor-toolbar button{background:#fff;border:1px solid #ddd;padding:5px 10px;border-radius:3px;font-size:12px;cursor:pointer;transition:background .2s;}
+    .editor-toolbar button:hover{background:#e0e0e0;}
+    #articleContent{border-radius:0 0 4px 4px;}
+
+    /* SETTINGS */
+    .settings-section{background:#fff;border-radius:6px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px;}
+    .settings-section h3{font-size:15px;font-weight:700;color:#1e2a38;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #f0f0f0;}
+
+    /* IMAGE PREVIEW */
+    .img-preview{margin-top:8px;max-width:200px;max-height:120px;border-radius:4px;border:1px solid #ddd;display:none;}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .admin-sidebar{display:none;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:500px){
+      .stats-grid{grid-template-columns:1fr;}
+      .form-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="admin-sidebar">
+  <div class="admin-logo">
+    <h2>UdaipurTimes</h2>
+    <p>Admin Panel</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a onclick="showPanel('dashboard')" id="nav-dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <div class="nav-section">Articles</div>
+    <a onclick="showPanel('articles')" id="nav-articles"><i class="fas fa-newspaper"></i> All Articles</a>
+    <a onclick="showPanel('add')" id="nav-add"><i class="fas fa-plus-circle"></i> Naya Article</a>
+    <div class="nav-section">Management</div>
+    <a onclick="showPanel('settings')" id="nav-settings"><i class="fas fa-cog"></i> Settings</a>
+    <a onclick="exportData()" id="nav-export"><i class="fas fa-download"></i> Export Data</a>
+    <a onclick="showPanel('import')" id="nav-import"><i class="fas fa-upload"></i> Import Data</a>
+  </nav>
+  <div class="admin-sidebar-footer">
+    <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> Website dekhein</a>
+    <button class="logout-btn" onclick="logout()" style="width:100%;margin-top:8px"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="admin-main">
+  <div class="admin-topbar">
+    <h1 id="topbarTitle">Dashboard</h1>
+    <div class="user-info">
+      <span><i class="fas fa-user-circle"></i> Admin</span>
+      <a href="../index.html" target="_blank" style="color:#c0392b;font-size:12px;font-weight:700;text-decoration:none"><i class="fas fa-external-link-alt"></i> Site Dekhein</a>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="alert" id="alertBox"></div>
+
+    <!-- DASHBOARD PANEL -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Latest Articles</h3>
+          <button class="add-new-btn" onclick="showPanel('add')"><i class="fas fa-plus"></i> Naya Article</button>
+        </div>
+        <table id="dashTable">
+          <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr></thead>
+          <tbody id="dashTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ARTICLES PANEL -->
+    <div class="panel" id="panel-articles">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Saare Articles (<span id="articleCount">0</span>)</h3>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <select id="catFilter" onchange="renderArticleTable()" style="padding:7px 10px;border:1px solid #ddd;border-radius:4px;font-size:13px;outline:none">
+              <option value="">Sabhi Categories</option>
+            </select>
+            <input type="text" class="table-search" id="articleSearch" placeholder="Search articles..." oninput="renderArticleTable()">
+            <button class="add-new-btn" onclick="showPanel('add')"><i class="fas fa-plus"></i> Naya</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Title</th><th>Category</th><th>Status</th><th>Date</th><th>Views</th><th>Actions</th></tr></thead>
+          <tbody id="articleTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADD / EDIT PANEL -->
+    <div class="panel" id="panel-add">
+      <div class="form-card">
+        <div class="form-title" id="formTitle"><i class="fas fa-plus-circle" style="color:#c0392b"></i> Naya Article Likhein</div>
+
+        <input type="hidden" id="editId">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Title <span class="req">*</span></label>
+            <input type="text" id="artTitle" placeholder="Article ka title yahan likhein...">
+          </div>
+          <div class="form-group">
+            <label>Category <span class="req">*</span></label>
+            <select id="artCategory">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Author Name <span class="req">*</span></label>
+            <input type="text" id="artAuthor" placeholder="Lekhak ka naam">
+          </div>
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <input type="text" id="artTags" placeholder="udaipur, news, local">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Excerpt / Summary <span class="req">*</span></label>
+          <textarea id="artExcerpt" style="min-height:80px" placeholder="Article ki 2-3 line summary likhein jo listing mein dikhegi..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Image URL <span class="req"></span></label>
+          <input type="text" id="artImage" placeholder="https://example.com/image.jpg ya Google image link" oninput="previewImage()">
+          <div class="hint">Koi bhi image URL paste karein. Blank chhod sakte hain - default image aayega.</div>
+          <img id="imgPreview" class="img-preview" alt="Preview">
+        </div>
+
+        <div class="form-group">
+          <label>Article Content <span class="req">*</span></label>
+          <div class="editor-toolbar">
+            <button onclick="formatText('bold')" title="Bold"><b>B</b></button>
+            <button onclick="formatText('italic')" title="Italic"><i>I</i></button>
+            <button onclick="formatText('underline')" title="Underline"><u>U</u></button>
+            <button onclick="insertTag('h2')" title="Heading 2">H2</button>
+            <button onclick="insertTag('h3')" title="Heading 3">H3</button>
+            <button onclick="insertTag('p')" title="Paragraph">¶</button>
+            <button onclick="insertLink()" title="Link"><i class="fas fa-link"></i></button>
+            <button onclick="insertQuote()" title="Quote"><i class="fas fa-quote-left"></i></button>
+            <button onclick="insertImage()" title="Image"><i class="fas fa-image"></i></button>
+            <button onclick="clearContent()" title="Clear" style="color:#c0392b">✕ Clear</button>
+          </div>
+          <textarea id="articleContent" placeholder="Yahan apna pura article likhein. HTML tags use kar sakte hain jaise &lt;p&gt;, &lt;h2&gt;, &lt;b&gt;, &lt;i&gt; etc.&#10;&#10;Example:&#10;&lt;p&gt;Pehla paragraph yahan...&lt;/p&gt;&#10;&lt;h2&gt;Sub Heading&lt;/h2&gt;&#10;&lt;p&gt;Doosra paragraph...&lt;/p&gt;"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Publish Date</label>
+            <input type="datetime-local" id="artDate">
+          </div>
+          <div class="form-group">
+            <label>URL Slug (optional)</label>
+            <input type="text" id="artSlug" placeholder="Auto-generate hoga title se">
+            <div class="hint">Blank chhod sakte hain</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Options</label>
+          <div class="checkbox-row">
+            <label class="checkbox-item"><input type="checkbox" id="artFeatured"> <span>⭐ Featured Article (Homepage top mein dikhega)</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="artBreaking"> <span>🔴 Breaking News (Ticker mein dikhega)</span></label>
+          </div>
+        </div>
+
+        <div class="submit-bar">
+          <button class="btn-primary" onclick="saveArticle()"><i class="fas fa-save"></i> Article Publish Karein</button>
+          <button class="btn-success" onclick="saveDraft()"><i class="fas fa-file-alt"></i> Draft Save Karein</button>
+          <button class="btn-secondary" onclick="resetForm()"><i class="fas fa-times"></i> Reset</button>
+          <button class="btn-secondary" onclick="showPanel('articles')"><i class="fas fa-arrow-left"></i> Wapas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="panel" id="panel-settings">
+      <div class="settings-section">
+        <h3><i class="fas fa-globe" style="color:#c0392b"></i> Site Settings</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Site Name</label>
+            <input type="text" id="siteName" placeholder="UdaipurTimes">
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" id="siteTagline" placeholder="Taking Local Global">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Articles Per Page</label>
+          <input type="number" id="perPage" min="6" max="50" placeholder="12" style="width:120px">
+        </div>
+        <button class="btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Settings Save Karein</button>
+      </div>
+
+      <div class="settings-section">
+        <h3><i class="fas fa-lock" style="color:#c0392b"></i> Password Badlein</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Purana Password</label>
+            <input type="password" id="oldPass" placeholder="Current password">
+          </div>
+          <div class="form-group">
+            <label>Naya Password</label>
+            <input type="password" id="newPass" placeholder="Naya password">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="changePassword()"><i class="fas fa-key"></i> Password Badlein</button>
+      </div>
+
+      <div class="settings-section">
+        <h3><i class="fas fa-trash-alt" style="color:#e74c3c"></i> Danger Zone</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:12px">Yeh actions permanent hain aur undo nahi ho sakti.</p>
+        <button onclick="resetToDefault()" style="background:#e74c3c;color:#fff;border:none;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer">
+          <i class="fas fa-redo"></i> Default Articles Restore Karein
+        </button>
+      </div>
+    </div>
+
+    <!-- IMPORT PANEL -->
+    <div class="panel" id="panel-import">
+      <div class="form-card">
+        <div class="form-title"><i class="fas fa-upload" style="color:#c0392b"></i> Data Import</div>
+        <div class="form-group">
+          <label>JSON Data Paste Karein</label>
+          <textarea id="importData" style="min-height:300px;font-family:monospace;font-size:12px" placeholder="Exported JSON data yahan paste karein..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="importData()"><i class="fas fa-file-import"></i> Import Karein</button>
+        <button class="btn-secondary" onclick="showPanel('dashboard')" style="margin-left:10px">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script>
+// Auth check
+if(sessionStorage.getItem('ut_admin')!=='1') window.location.href='index.html';
+
+function logout(){sessionStorage.removeItem('ut_admin');window.location.href='index.html';}
+
+// Show/hide panels
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const navEl=document.getElementById('nav-'+name);
+  if(navEl) navEl.classList.add('active');
+  const titles={dashboard:'Dashboard',articles:'Articles Manage Karein',add:'Naya Article Likhein',settings:'Settings',import:'Data Import'};
+  document.getElementById('topbarTitle').textContent = titles[name]||name;
+  if(name==='dashboard') renderDashboard();
+  if(name==='articles') renderArticleTable();
+  if(name==='settings') loadSettings();
+  if(name==='add') {
+    const editId=document.getElementById('editId').value;
+    if(!editId){resetForm();}
+  }
+}
+
+// Alert
+function showAlert(msg,type='success'){
+  const el=document.getElementById('alertBox');
+  el.className='alert '+type;
+  el.textContent=msg;
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',4000);
+}
+
+// Dashboard stats
+function renderDashboard(){
+  const all=DB.getAll();
+  const cats=Object.keys(DB.categories);
+  const totalViews=all.reduce((s,a)=>s+a.views,0);
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-newspaper"></i></div><div><div class="stat-num">${all.length}</div><div class="stat-label">Total Articles</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-eye"></i></div><div><div class="stat-num">${totalViews.toLocaleString()}</div><div class="stat-label">Total Views</div></div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-star"></i></div><div><div class="stat-num">${all.filter(a=>a.featured).length}</div><div class="stat-label">Featured</div></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-bolt"></i></div><div><div class="stat-num">${all.filter(a=>a.breaking).length}</div><div class="stat-label">Breaking News</div></div></div>`;
+  const latest=all.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+  document.getElementById('dashTableBody').innerHTML=latest.map(a=>`
+    <tr>
+      <td class="art-title-cell">${a.title.substring(0,60)}${a.title.length>60?'...':''}<small>${a.slug||''}</small></td>
+      <td><span class="cat-badge">${DB.categories[a.category]?.label||a.category}</span></td>
+      <td style="font-size:12px;color:#888">${DB.formatDate(a.date)}</td>
+      <td><span style="font-weight:700;color:#1e2a38">${a.views}</span></td>
+      <td><div class="action-btns">
+        <button class="btn-edit" onclick="editArticle(${a.id})"><i class="fas fa-edit"></i></button>
+        <button class="btn-view" onclick="window.open('../article.html?id=${a.id}')"><i class="fas fa-eye"></i></button>
+        <button class="btn-del" onclick="deleteArticle(${a.id})"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// Article table
+function renderArticleTable(){
+  const catFilter=document.getElementById('catFilter').value;
+  const search=(document.getElementById('articleSearch').value||'').toLowerCase();
+  let all=DB.getAll().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(catFilter) all=all.filter(a=>a.category===catFilter);
+  if(search) all=all.filter(a=>a.title.toLowerCase().includes(search)||a.author.toLowerCase().includes(search));
+  document.getElementById('articleCount').textContent=all.length;
+
+  // Populate cat filter
+  const catSel=document.getElementById('catFilter');
+  if(catSel.options.length<=1){
+    Object.entries(DB.categories).forEach(([k,v])=>{
+      const o=document.createElement('option');o.value=k;o.textContent=v.label;catSel.appendChild(o);
+    });
+    if(catFilter) catSel.value=catFilter;
+  }
+
+  document.getElementById('articleTableBody').innerHTML=all.map((a,i)=>`
+    <tr>
+      <td style="color:#888;font-size:12px">${i+1}</td>
+      <td class="art-title-cell">${a.title.substring(0,55)}${a.title.length>55?'...':''}<small>By ${a.author}</small></td>
+      <td><span class="cat-badge">${DB.categories[a.category]?.label||a.category}</span></td>
+      <td>
+        ${a.featured?'<span class="feat-badge">⭐ Featured</span> ':''}
+        ${a.breaking?'<span class="break-badge">🔴 Breaking</span>':''}
+        ${!a.featured&&!a.breaking?'<span style="color:#888;font-size:11px">Normal</span>':''}
+      </td>
+      <td style="font-size:12px;color:#888">${DB.formatDate(a.date)}</td>
+      <td style="font-weight:700">${a.views}</td>
+      <td><div class="action-btns">
+        <button class="btn-edit" onclick="editArticle(${a.id})"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn-view" onclick="window.open('../article.html?id=${a.id}')"><i class="fas fa-eye"></i></button>
+        <button class="btn-del" onclick="deleteArticle(${a.id})"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// Populate category select in form
+function populateCatSelect(){
+  const sel=document.getElementById('artCategory');
+  sel.innerHTML='<option value="">Category Select Karein</option>';
+  Object.entries(DB.categories).forEach(([k,v])=>{
+    const o=document.createElement('option');o.value=k;o.textContent=v.label;sel.appendChild(o);
+  });
+}
+
+// Save article
+function saveArticle(){
+  const id=document.getElementById('editId').value;
+  const title=document.getElementById('artTitle').value.trim();
+  const category=document.getElementById('artCategory').value;
+  const author=document.getElementById('artAuthor').value.trim();
+  const excerpt=document.getElementById('artExcerpt').value.trim();
+  const content=document.getElementById('articleContent').value.trim();
+  if(!title||!category||!author||!excerpt||!content){showAlert('Sare required fields bharein!','error');return;}
+  const article={
+    title,category,author,excerpt,content,
+    image:document.getElementById('artImage').value.trim(),
+    tags:document.getElementById('artTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    slug:document.getElementById('artSlug').value.trim(),
+    featured:document.getElementById('artFeatured').checked,
+    breaking:document.getElementById('artBreaking').checked,
+    date:document.getElementById('artDate').value?new Date(document.getElementById('artDate').value).toISOString():new Date().toISOString()
+  };
+  if(id){DB.update(parseInt(id),article);showAlert('Article update ho gaya! ✓');}
+  else{DB.add(article);showAlert('Article publish ho gaya! ✓');}
+  resetForm();
+  showPanel('articles');
+}
+
+function saveDraft(){
+  const id=document.getElementById('editId').value;
+  const title=document.getElementById('artTitle').value.trim();
+  if(!title){showAlert('Title toh daalein!','error');return;}
+  const article={
+    title,
+    category:document.getElementById('artCategory').value||'news',
+    author:document.getElementById('artAuthor').value.trim()||'Admin',
+    excerpt:document.getElementById('artExcerpt').value.trim()||title,
+    content:document.getElementById('articleContent').value.trim(),
+    image:document.getElementById('artImage').value.trim(),
+    tags:document.getElementById('artTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    featured:false,breaking:false,
+    date:new Date().toISOString()
+  };
+  if(id) DB.update(parseInt(id),article); else DB.add(article);
+  showAlert('Draft save ho gaya! ✓');
+}
+
+function editArticle(id){
+  const a=DB.getById(id);
+  if(!a)return;
+  populateCatSelect();
+  document.getElementById('editId').value=a.id;
+  document.getElementById('artTitle').value=a.title;
+  document.getElementById('artCategory').value=a.category;
+  document.getElementById('artAuthor').value=a.author;
+  document.getElementById('artTags').value=(a.tags||[]).join(', ');
+  document.getElementById('artExcerpt').value=a.excerpt;
+  document.getElementById('articleContent').value=a.content||'';
+  document.getElementById('artImage').value=a.image||'';
+  document.getElementById('artSlug').value=a.slug||'';
+  document.getElementById('artFeatured').checked=!!a.featured;
+  document.getElementById('artBreaking').checked=!!a.breaking;
+  if(a.date) document.getElementById('artDate').value=new Date(a.date).toISOString().slice(0,16);
+  document.getElementById('formTitle').innerHTML='<i class="fas fa-edit" style="color:#c0392b"></i> Article Edit Karein';
+  previewImage();
+  showPanel('add');
+}
+
+function deleteArticle(id){
+  if(!confirm('Kya aap sure hain? Yeh article permanently delete ho jayega.'))return;
+  DB.delete(id);
+  showAlert('Article delete ho gaya!');
+  renderDashboard();
+  renderArticleTable();
+}
+
+function resetForm(){
+  document.getElementById('editId').value='';
+  document.getElementById('artTitle').value='';
+  document.getElementById('artAuthor').value='';
+  document.getElementById('artTags').value='';
+  document.getElementById('artExcerpt').value='';
+  document.getElementById('articleContent').value='';
+  document.getElementById('artImage').value='';
+  document.getElementById('artSlug').value='';
+  document.getElementById('artFeatured').checked=false;
+  document.getElementById('artBreaking').checked=false;
+  document.getElementById('artDate').value='';
+  document.getElementById('imgPreview').style.display='none';
+  document.getElementById('formTitle').innerHTML='<i class="fas fa-plus-circle" style="color:#c0392b"></i> Naya Article Likhein';
+  populateCatSelect();
+}
+
+// Image preview
+function previewImage(){
+  const url=document.getElementById('artImage').value.trim();
+  const img=document.getElementById('imgPreview');
+  if(url){img.src=url;img.style.display='block';}
+  else{img.style.display='none';}
+}
+
+// Editor helpers
+function formatText(cmd){
+  const ta=document.getElementById('articleContent');
+  const start=ta.selectionStart,end=ta.selectionEnd;
+  const sel=ta.value.substring(start,end);
+  const tags={bold:'<b>%</b>',italic:'<i>%</i>',underline:'<u>%</u>'};
+  const rep=tags[cmd].replace('%',sel||'text yahan');
+  ta.value=ta.value.substring(0,start)+rep+ta.value.substring(end);
+}
+function insertTag(tag){
+  const ta=document.getElementById('articleContent');
+  const pos=ta.selectionStart;
+  const ins=`<${tag}>Yahan likhein</${tag}>\n`;
+  ta.value=ta.value.substring(0,pos)+ins+ta.value.substring(pos);
+}
+function insertLink(){
+  const url=prompt('URL daalein:');
+  const text=prompt('Link text:','Yahan click karein');
+  if(url){const ta=document.getElementById('articleContent');const pos=ta.selectionStart;ta.value=ta.value.substring(0,pos)+`<a href="${url}">${text}</a>`+ta.value.substring(pos);}
+}
+function insertQuote(){const ta=document.getElementById('articleContent');const pos=ta.selectionStart;ta.value=ta.value.substring(0,pos)+'<blockquote style="border-left:4px solid #c0392b;padding:10px 16px;background:#fef9f9;margin:16px 0;font-style:italic">Quote yahan likhein</blockquote>\n'+ta.value.substring(pos);}
+function insertImage(){const url=prompt('Image URL daalein:');if(url){const ta=document.getElementById('articleContent');const pos=ta.selectionStart;ta.value=ta.value.substring(0,pos)+`<img src="${url}" alt="image" style="max-width:100%;border-radius:4px;margin:12px 0">\n`+ta.value.substring(pos);}}
+function clearContent(){if(confirm('Content clear karna chahte hain?'))document.getElementById('articleContent').value='';}
+
+// Settings
+function loadSettings(){
+  const s=DB.getSettings();
+  document.getElementById('siteName').value=s.siteName||'';
+  document.getElementById('siteTagline').value=s.tagline||'';
+  document.getElementById('perPage').value=s.articlesPerPage||12;
+}
+function saveSettings(){
+  const s=DB.getSettings();
+  s.siteName=document.getElementById('siteName').value.trim();
+  s.tagline=document.getElementById('siteTagline').value.trim();
+  s.articlesPerPage=parseInt(document.getElementById('perPage').value)||12;
+  DB.saveSettings(s);showAlert('Settings save ho gayi! ✓');
+}
+function changePassword(){
+  const old=document.getElementById('oldPass').value;
+  const nw=document.getElementById('newPass').value;
+  const s=DB.getSettings();
+  if(old!==s.adminPassword){showAlert('Purana password galat hai!','error');return;}
+  if(nw.length<6){showAlert('Naya password kam se kam 6 characters ka hona chahiye!','error');return;}
+  s.adminPassword=nw;DB.saveSettings(s);
+  document.getElementById('oldPass').value='';document.getElementById('newPass').value='';
+  showAlert('Password badal gaya! ✓');
+}
+function resetToDefault(){
+  if(!confirm('Kya aap sure hain? Sare articles delete ho jayenge aur default articles aayenge!'))return;
+  localStorage.removeItem(DB.STORAGE_KEY);showAlert('Default articles restore ho gaye! ✓');renderDashboard();
+}
+
+// Export
+function exportData(){
+  const data=JSON.stringify(DB.getAll(),null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='udaipurtimes-articles-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(url);
+  showAlert('Data export ho gaya! ✓');
+}
+
+// Import
+function importData(){
+  try{
+    const raw=document.getElementById('importData').value.trim();
+    const articles=JSON.parse(raw);
+    if(!Array.isArray(articles)){showAlert('Invalid JSON format!','error');return;}
+    DB.saveAll(articles);
+    showAlert(`${articles.length} articles import ho gaye! ✓`);
+    document.getElementById('importData').value='';
+    showPanel('dashboard');
+  }catch(e){showAlert('JSON galat hai: '+e.message,'error');}
+}
+
+// Init
+populateCatSelect();
+renderDashboard();
+</script>
+</body>
+</html>
