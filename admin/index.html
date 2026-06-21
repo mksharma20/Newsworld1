@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | UdaipurTimes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Open Sans',sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+    .login-box{background:#fff;border-radius:8px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+    .login-logo{text-align:center;margin-bottom:28px;}
+    .login-logo span{font-size:28px;font-weight:700;color:#c0392b;font-family:Georgia,serif;}
+    .login-logo p{font-size:11px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+    .login-box h2{text-align:center;font-size:18px;color:#333;margin-bottom:24px;font-weight:600;}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+    .form-group input{width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:4px;font-size:14px;outline:none;transition:border .2s;}
+    .form-group input:focus{border-color:#c0392b;}
+    .login-btn{width:100%;background:#c0392b;color:#fff;border:none;padding:13px;border-radius:4px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:4px;}
+    .login-btn:hover{background:#922b21;}
+    .error-msg{background:#fdf2f2;border:1px solid #f5c6c6;color:#c0392b;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:16px;display:none;}
+    .back-link{text-align:center;margin-top:20px;font-size:13px;color:#888;}
+    .back-link a{color:#c0392b;font-weight:600;}
+    .default-info{background:#f0f8ff;border:1px solid #bee3f8;border-radius:4px;padding:10px 14px;font-size:12px;color:#2b6cb0;margin-bottom:16px;text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-logo">
+      <span>UdaipurTimes</span>
+      <p>Admin Panel</p>
+    </div>
+    <div class="default-info"><i class="fas fa-info-circle"></i> Default Password: <strong>admin123</strong><br>Settings mein badlein</div>
+    <div class="error-msg" id="errorMsg"><i class="fas fa-exclamation-triangle"></i> Password galat hai!</div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Admin password daalein" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="login-btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> Login Karein</button>
+    <div class="back-link"><a href="../index.html"><i class="fas fa-arrow-left"></i> Website par wapas jaayein</a></div>
+  </div>
+  <script src="../js/data.js"></script>
+  <script>
+    if(sessionStorage.getItem('ut_admin')==='1') window.location.href='dashboard.html';
+    function login(){
+      const pw=document.getElementById('password').value;
+      const settings=DB.getSettings();
+      if(pw===settings.adminPassword){
+        sessionStorage.setItem('ut_admin','1');
+        window.location.href='dashboard.html';
+      } else {
+        document.getElementById('errorMsg').style.display='block';
+        document.getElementById('password').value='';
+        document.getElementById('password').focus();
+      }
+    }
+  </script>
+</body>
+</html>
